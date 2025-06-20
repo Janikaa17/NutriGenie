@@ -5,7 +5,6 @@ import Home from './pages/Home';
 import About from './pages/About';
 import RecipeInputPage from './pages/RecipeInputPage';
 import RecipeOutputPage from './pages/RecipeOutputPage';
-import SavedRecipesPage from './pages/SavedRecipesPage';
 
 function App() {
   return (
@@ -16,7 +15,6 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/transformer" element={<RecipeInputPage />} />
         <Route path="/output" element={<RecipeOutputPage />} />
-        <Route path="/saved" element={<SavedRecipesPage />} />
       </Routes>
     </div>
   );

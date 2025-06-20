@@ -93,9 +93,9 @@ function RecipeInput() {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-10">
+        <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-                <label htmlFor="recipe" className="block text-2xl font-oswald font-extrabold text-[#22B573] mb-4 tracking-wide">
+                <label htmlFor="recipe" className="block text-base font-oswald font-bold text-[#22B573] mb-2 tracking-wide">
                     Paste Your Recipe
                 </label>
                 <textarea
@@ -103,52 +103,52 @@ function RecipeInput() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="E.g., Aloo Paratha with butter and curd..."
-                    className="w-full p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-[#22B573] text-base font-sans transition-all min-h-[80px] resize-vertical placeholder-gray-400"
-                    rows={4}
+                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-[#22B573] text-sm font-sans transition-all min-h-[60px] resize-vertical placeholder-gray-400"
+                    rows={3}
                     required
                 />
-                <p className="text-base text-gray-500 mt-3">Paste your full recipe or write a short description of what you usually cook. The more details, the better the transformation!</p>
+                <p className="text-xs text-gray-500 mt-1">Paste your full recipe or write a short description of what you usually cook.</p>
             </div>
 
             <div>
-                <label className="block text-2xl font-oswald font-extrabold text-[#22B573] mb-4 tracking-wide">
+                <label className="block text-base font-oswald font-bold text-[#22B573] mb-2 tracking-wide">
                     Dietary Preference
                 </label>
-                <div className="flex gap-4">
+                <div className="flex gap-2">
                     <button
                         type="button"
                         onClick={() => setDietaryPreference('veg')}
-                        className={`flex items-center justify-center gap-2 px-4 py-2 font-oswald font-bold text-base rounded-lg shadow-md transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#22B573]/30 ${
+                        className={`flex items-center justify-center gap-1 px-3 py-1 font-oswald font-bold text-xs rounded-none shadow-sm transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#22B573]/30 ${
                             dietaryPreference === 'veg' 
                             ? 'bg-[#22B573] text-white ring-2 ring-offset-2 ring-[#22B573]' 
                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                     >
-                        <FaLeaf className="text-lg" /> Veg
+                        <FaLeaf className="text-base" /> Veg
                     </button>
                     <button
                         type="button"
                         onClick={() => setDietaryPreference('non-veg')}
-                        className={`flex items-center justify-center gap-2 px-4 py-2 font-oswald font-bold text-base rounded-lg shadow-md transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#A93226]/30 ${
+                        className={`flex items-center justify-center gap-1 px-3 py-1 font-oswald font-bold text-xs rounded-none shadow-sm transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#A93226]/30 ${
                             dietaryPreference === 'non-veg' 
                             ? 'bg-[#A93226] text-white ring-2 ring-offset-2 ring-[#A93226]' 
                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                     >
-                        <FaDrumstickBite className="text-lg" /> Non-Veg
+                        <FaDrumstickBite className="text-base" /> Non-Veg
                     </button>
                 </div>
             </div>
 
             <div>
-                <label htmlFor="goal" className="block text-2xl font-oswald font-extrabold text-[#22B573] mb-4 tracking-wide">
-                    Nutritional Focus <span className="text-gray-400 font-normal text-lg">(optional)</span>
+                <label htmlFor="goal" className="block text-base font-oswald font-bold text-[#22B573] mb-2 tracking-wide">
+                    Nutritional Focus <span className="text-gray-400 font-normal text-xs">(optional)</span>
                 </label>
                 <select
                     id="goal"
                     value={goal}
                     onChange={(e) => setGoal(e.target.value)}
-                    className="w-full p-5 bg-white border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-4 focus:ring-[#22B573]/30 text-lg font-sans appearance-none transition-all"
+                    className="w-full p-3 bg-white border-2 border-gray-200 rounded-none shadow-sm focus:outline-none focus:ring-2 focus:ring-[#22B573]/30 text-sm font-sans appearance-none transition-all"
                 >
                     <option value="">-- Select a nutritional goal --</option>
                     <option value="High-Protein">High-Protein</option>
@@ -159,10 +159,10 @@ function RecipeInput() {
                 </select>
             </div>
 
-            {error && <p className="text-red-600 text-lg font-semibold text-center mt-2">{error}</p>}
+            {error && <p className="text-red-600 text-xs font-semibold text-center mt-1">{error}</p>}
 
             <button
-                className="w-full flex items-center justify-center gap-3 py-5 bg-[#22B573] text-white font-oswald font-extrabold text-2xl rounded-2xl shadow-lg hover:bg-[#328E6E] transition-colors disabled:opacity-50 tracking-wide focus:outline-none focus:ring-4 focus:ring-[#22B573]/30"
+                className="w-full flex items-center justify-center gap-2 py-3 bg-[#22B573] text-white font-oswald font-bold text-base rounded-none shadow-md hover:bg-[#328E6E] transition-colors disabled:opacity-50 tracking-wide focus:outline-none focus:ring-2 focus:ring-[#22B573]/30"
                 type="submit"
                 disabled={loading}
             >

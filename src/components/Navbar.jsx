@@ -1,6 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
 import logo from '../assets/nutrigeniewhitelogo.png';
-import { BsBookmarkFill } from 'react-icons/bs';
 
 function Navbar() {
     const location = useLocation();
@@ -8,12 +7,6 @@ function Navbar() {
     const linkClasses = (path) =>
         `font-oswald font-extrabold uppercase text-lg px-3 py-2 rounded-md transition-colors ${location.pathname === path
             ? 'text-[#22B573] underline underline-offset-4'
-            : 'text-white hover:text-[#22B573]'
-        }`;
-
-    const iconClasses = (path) =>
-        `text-xl px-3 py-2 rounded-md transition-colors ${location.pathname === path
-            ? 'text-[#22B573]'
             : 'text-white hover:text-[#22B573]'
         }`;
 
@@ -36,9 +29,6 @@ function Navbar() {
                             </Link>
                             <Link to="/about" className={linkClasses('/about') + ' uppercase tracking-wider'}>
                                 About
-                            </Link>
-                            <Link to="/saved" className={iconClasses('/saved')} title="Saved Recipes">
-                                <BsBookmarkFill />
                             </Link>
                         </div>
                     </div>

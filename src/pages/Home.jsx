@@ -98,19 +98,19 @@ function Home() {
                 {/* Right: Text */}
                 <div className="md:w-1/2 w-full flex flex-col justify-center px-8 py-16 md:py-0 bg-black text-left">
                     <div className="max-w-2xl mx-auto">
-                        <h1 className="text-4xl md:text-6xl font-oswald font-extrabold leading-tight mb-6">
-                            <span className="inline bg-[#22B573] border border-[#22B573] text-white px-1 py-px">EVERYONE</span>
+                        <h1 className="text-4xl md:text-6xl font-oswald font-extrabold leading-tight mt-4 mb-6">
+                            <span className="inline-block align-middle leading-none bg-[#22B573] border border-[#22B573] text-white px-1 py-0">EVERYONE</span>
                             <span className="block text-[#22B573] bg-black px-2">DESERVES</span>
                             <span className="block text-white bg-black px-2">A HEALTHIER RECIPE</span>
                         </h1>
-                        <p className="text-lg md:text-2xl text-white mb-8 bg-black px-2">
+                        <p className="text-lg md:text-xl text-white mb-8 bg-black px-2">
                             NutriGenie helps you transform your favorite dishes into healthier, Indianized versions—without losing the flavors you love. Start your journey to better nutrition today.
                         </p>
                         <Link
                             to="/transformer"
-                            className="inline-block mt-2 px-10 py-4 bg-[#22B573] text-white font-oswald font-bold text-2xl rounded-lg shadow-lg hover:bg-[#328E6E] transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#22B573]/30"
+                            className="inline-block mt-2 px-10 py-4 bg-[#22B573] text-white font-oswald font-bold text-2xl shadow-lg hover:bg-[#328E6E] transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#22B573]/30"
                         >
-                            Get Started
+                            GET STARTED
                         </Link>
                     </div>
                 </div>
@@ -125,7 +125,7 @@ function Home() {
                     </p>
                     <Link
                         to="/about"
-                        className="inline-block border bg-[#FF5C5C] text-[#ffffff] px-8 py-4 rounded text-xl font-bold tracking-wide transition hover:bg-[#FF3F33] hover:text-white w-max mb-12 text-left"
+                        className="inline-block border font-oswald bg-[#FF5C5C] text-[#ffffff] px-8 py-4 text-xl font-bold tracking-wide transition hover:bg-[#FF3F33] hover:text-white w-max mb-12 text-left"
                     >
                         LEARN MORE <svg className="inline ml-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="19" x2="19" y2="5" /><polyline points="7 5 19 5 19 17" /></svg>
                     </Link>
@@ -155,7 +155,7 @@ function Home() {
                             <p className="text-white text-left mb-8">Submit any recipe, traditional or modern — in plain text.</p>
                             <Link
                                 to="/transformer"
-                                className="group bg-[#22B573] text-white px-6 py-3 rounded-none font-bold uppercase tracking-wide text-lg hover:bg-[#328E6E] hover:text-white transition flex items-center gap-2 w-max text-left"
+                                className="group bg-[#22B573] font-oswald text-white px-6 py-3 rounded-none font-bold uppercase tracking-wide text-lg hover:bg-[#328E6E] hover:text-white transition flex items-center gap-2 w-max text-left"
                             >
                                 Get Started
                                 <svg className="inline ml-2 transition-colors duration-200 group-hover:stroke-white" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -171,7 +171,7 @@ function Home() {
                             <p className="text-white text-left mb-8">Choose from protein-rich, iron-boosting, or fiber-focused variants.</p>
                             <button
                                 onClick={handleOpenSample}
-                                className="group bg-[#22B573] text-white px-6 py-3 rounded-none font-bold uppercase tracking-wide text-lg hover:bg-[#328E6E] hover:text-white transition flex items-center gap-2 w-max text-left"
+                                className="group bg-[#22B573] text-white px-6 py-3 font-oswald rounded-none font-bold uppercase tracking-wide text-lg hover:bg-[#328E6E] hover:text-white transition flex items-center gap-2 w-max text-left"
                             >
                                 See Options
                                 <svg className="inline ml-2 transition-colors duration-200 group-hover:stroke-white" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -185,7 +185,7 @@ function Home() {
                             <div className="text-[80px] mb-8 text-[#22B573]">🌿</div>
                             <h3 className="text-2xl font-oswald font-bold text-[#ffffff] uppercase mb-4 text-left">Culturally Aware AI</h3>
                             <p className="text-white text-left mb-8">Recipes customized for Indian households using local ingredients.</p>
-                            <a href="/about" className="group bg-[#22B573] text-white px-6 py-3 rounded-none font-bold uppercase tracking-wide text-lg hover:bg-[#328E6E] hover:text-white transition flex items-center gap-2 w-max text-left">
+                            <a href="/about" className="group bg-[#22B573] text-white font-oswald px-6 py-3 rounded-none font-bold uppercase tracking-wide text-lg hover:bg-[#328E6E] hover:text-white transition flex items-center gap-2 w-max text-left">
                                 Learn More
                                 <svg className="inline ml-2 transition-colors duration-200 group-hover:stroke-white" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <line x1="5" y1="19" x2="19" y2="5" />
@@ -200,7 +200,7 @@ function Home() {
                             <p className="text-white text-left mb-8">Visual before-after comparison of ingredients and nutrients.</p>
                             <button
                                 onClick={handleOpenCompare}
-                                className="group bg-[#22B573] text-white px-6 py-3 rounded-none font-bold uppercase tracking-wide text-lg hover:bg-[#328E6E] hover:text-white transition flex items-center gap-2 w-max text-left"
+                                className="group bg-[#22B573] text-white font-oswald px-6 py-3 rounded-none font-bold uppercase tracking-wide text-lg hover:bg-[#328E6E] hover:text-white transition flex items-center gap-2 w-max text-left"
                             >
                                 Compare
                                 <svg className="inline ml-2 transition-colors duration-200 group-hover:stroke-white" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
