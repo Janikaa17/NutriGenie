@@ -5,17 +5,9 @@ import { FaLeaf, FaDrumstickBite, FaSyncAlt } from "react-icons/fa";
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
-async function callGroq(prompt) {
-  const requestBody = {
-    model: "llama3-8b-8192",
-    messages: [{ role: "user", content: prompt }],
-    temperature: 0.7,
-    response_format: { type: "json_object" },
-  };
-  
+async function callGroq(requestBody) {
   console.log("Groq API request body:", requestBody);
   console.log("API Key present:", !!GROQ_API_KEY);
-  
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -25,13 +17,11 @@ async function callGroq(prompt) {
       },
       body: JSON.stringify(requestBody),
     });
-    
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Groq API error response:", response.status, errorText);
       throw new Error(`Groq API error: ${response.status} - ${errorText}`);
     }
-    
     return response.json();
   } catch (error) {
     console.error("Fetch error:", error);
@@ -48,38 +38,25 @@ function RecipeInput() {
     const { setRecipeInput, setRecipeOutput } = useRecipe();
     const navigate = useNavigate();
 
+    const systemPrompt = `You are an expert Indian nutritionist and chef. Always respond in clear, simple language suitable for Indian home cooks. Be concise, use bullet points where possible, and avoid unnecessary repetition.`;
+
+    const prompt = `Analyze the following recipe (as written by the user): \"${input}\".\n\n1. Extract the original recipe's ingredients and instructions as faithfully as possible.\n2. Create the single best healthier, strictly ${dietaryPreference} variant for this recipe, focusing on: ${goal || "general improvements"}.\n3. Use seasonal, locally available Indian ingredients.\n4. Use clear, simple language.\n\nReturn a valid JSON object with this structure:\n{\n  \"originalRecipe\": {\n    \"ingredients\": [ { \"name\": \"Ingredient Name\", \"quantity\": \"e.g., 200g\", \"notes\": \"Optional notes\" } ],\n    \"instructions\": [ \"Step-by-step instruction...\" ]\n  },\n  \"transformedRecipe\": {\n    \"title\": \"Variant Title\",\n    \"description\": \"Short, engaging, and concise.\",\n    \"nutritionFocus\": \"The main nutritional goal (e.g., High-Protein)\",\n    \"ingredients\": [ { \"name\": \"Ingredient Name\", \"quantity\": \"e.g., 200g\", \"notes\": \"Optional notes\" } ],\n    \"instructions\": [ \"Step-by-step instruction...\" ],\n    \"proTip\": \"Optional professional tip.\"\n  },\n  \"whatChanged\": [\n    \"Short bullet point describing a key change (e.g., 'Replaced butter with olive oil')\"\n  ]\n}\n\nThe recommended variant MUST be strictly ${dietaryPreference}. If the original recipe is non-veg and a veg variant is requested, you must replace all meat/eggs. If the original is veg and a non-veg variant is requested, you must suggest an appropriate and healthy addition of meat, fish, or eggs.`;
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
 
-        const prompt = `You are an expert nutritionist and chef specializing in Indian cuisine.
-        Analyze the following recipe: "${input}".
-        Your primary task is to create the single best healthier, strictly ${dietaryPreference} variant for this recipe, focusing on: ${goal || "general improvements"}.
-
-        Please return the response as a valid JSON object with the following structure:
-        {
-          "originalRecipeSummary": "A brief, one-sentence summary of the original recipe.",
-          "overallSuggestions": "A few general tips (as an array of strings) for making the original recipe healthier, relevant to your recommendation.",
-          "recommendedVariant": {
-            "title": "Variant Title (e.g., High-Protein Paneer Paratha)",
-            "description": "A short, engaging description of this variant and why it's the best recommendation.",
-            "nutritionFocus": "The primary nutritional goal this variant achieves (e.g., High-Protein, Iron-Rich).",
-            "ingredients": [
-              { "name": "Ingredient Name", "quantity": "e.g., 200g", "notes": "Optional notes (e.g., crumbled)" }
-            ],
-            "instructions": [
-              "Step-by-step instruction...",
-              "Another step..."
-            ],
-            "proTip": "An optional professional tip for this specific variant."
-          }
-        }
-
-        The recommended variant MUST be strictly ${dietaryPreference}. If the original recipe is non-veg and a veg variant is requested, you must replace all meat/eggs. If the original is veg and a non-veg variant is requested, you must suggest an appropriate and healthy addition of meat, fish, or eggs. Use seasonal, locally available Indian ingredients.`;
-
         try {
-            const data = await callGroq(prompt);
+            const data = await callGroq({
+                model: "llama3-8b-8192",
+                messages: [
+                    { role: "system", content: systemPrompt },
+                    { role: "user", content: prompt }
+                ],
+                temperature: 0.7,
+                response_format: { type: "json_object" }
+            });
             const resultJson = JSON.parse(data.choices[0].message.content);
             setRecipeInput(input);
             setRecipeOutput(resultJson);
