@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/recipe-transform.js": {
+      "maxDuration": 30
+    }
+  }
+} 

@@ -2,32 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecipe } from "../context/RecipeContext";
 import { FaLeaf, FaDrumstickBite, FaSyncAlt } from "react-icons/fa";
-
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
-
-async function callGroq(requestBody) {
-  console.log("Groq API request body:", requestBody);
-  console.log("API Key present:", !!GROQ_API_KEY);
-  try {
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${GROQ_API_KEY}`,
-      },
-      body: JSON.stringify(requestBody),
-    });
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Groq API error response:", response.status, errorText);
-      throw new Error(`Groq API error: ${response.status} - ${errorText}`);
-    }
-    return response.json();
-  } catch (error) {
-    console.error("Fetch error:", error);
-    throw error;
-  }
-}
+import { transformRecipe } from "../api/groq";
 
 function RecipeInput() {
     const [input, setInput] = useState("");
@@ -48,22 +23,19 @@ function RecipeInput() {
         setError(null);
 
         try {
-            const data = await callGroq({
-                model: "llama3-8b-8192",
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    { role: "user", content: prompt }
-                ],
-                temperature: 0.7,
-                response_format: { type: "json_object" }
-            });
-            const resultJson = JSON.parse(data.choices[0].message.content);
+            const recipeData = {
+                input,
+                goal,
+                dietaryPreference
+            };
+            
+            const result = await transformRecipe(recipeData);
             setRecipeInput(input);
-            setRecipeOutput(resultJson);
+            setRecipeOutput(result);
             navigate("/output");
         } catch (err) {
-            console.error("Groq API error or JSON parsing error", err);
-            setError("Failed to get a valid response from the AI. Please try again with a clearer recipe.");
+            console.error("API error", err);
+            setError("Failed to transform recipe. Please try again.");
         } finally {
             setLoading(false);
         }
