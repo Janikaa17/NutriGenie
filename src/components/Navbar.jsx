@@ -14,7 +14,7 @@ function Navbar() {
         <nav className="bg-[#000000] shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center h-16 relative">
-                    {/* Logo / App Title */}
+                    {/* Logo / App Title Name*/}
                     <Link to="/" className="text-xl font-bold text-[xs./.o0#22B573]">
                         <img src={logo} alt="Healthify Logo" className="w-45 h-12" />
                     </Link>
