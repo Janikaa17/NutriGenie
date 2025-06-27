@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecipe } from "../context/RecipeContext";
-import { FaLeaf, FaDrumstickBite, FaSyncAlt } from "react-icons/fa";
+import { FaLeaf, FaDrumstickBite, FaSyncAlt, FaHeart, FaBrain, FaWeight, FaShieldAlt } from "react-icons/fa";
 import { transformRecipe } from "../api/groq";
 
 function RecipeInput() {
@@ -12,10 +12,6 @@ function RecipeInput() {
     const [error, setError] = useState(null);
     const { setRecipeInput, setRecipeOutput } = useRecipe();
     const navigate = useNavigate();
-
-    const systemPrompt = `You are an expert Indian nutritionist and chef. Always respond in clear, simple language suitable for Indian home cooks. Be concise, use bullet points where possible, and avoid unnecessary repetition.`;
-
-    const prompt = `Analyze the following recipe (as written by the user): \"${input}\".\n\n1. Extract the original recipe's ingredients and instructions as faithfully as possible.\n2. Create the single best healthier, strictly ${dietaryPreference} variant for this recipe, focusing on: ${goal || "general improvements"}.\n3. Use seasonal, locally available Indian ingredients.\n4. Use clear, simple language.\n\nReturn a valid JSON object with this structure:\n{\n  \"originalRecipe\": {\n    \"ingredients\": [ { \"name\": \"Ingredient Name\", \"quantity\": \"e.g., 200g\", \"notes\": \"Optional notes\" } ],\n    \"instructions\": [ \"Step-by-step instruction...\" ]\n  },\n  \"transformedRecipe\": {\n    \"title\": \"Variant Title\",\n    \"description\": \"Short, engaging, and concise.\",\n    \"nutritionFocus\": \"The main nutritional goal (e.g., High-Protein)\",\n    \"ingredients\": [ { \"name\": \"Ingredient Name\", \"quantity\": \"e.g., 200g\", \"notes\": \"Optional notes\" } ],\n    \"instructions\": [ \"Step-by-step instruction...\" ],\n    \"proTip\": \"Optional professional tip.\"\n  },\n  \"whatChanged\": [\n    \"Short bullet point describing a key change (e.g., 'Replaced butter with olive oil')\"\n  ]\n}\n\nThe recommended variant MUST be strictly ${dietaryPreference}. If the original recipe is non-veg and a veg variant is requested, you must replace all meat/eggs. If the original is veg and a non-veg variant is requested, you must suggest an appropriate and healthy addition of meat, fish, or eggs.`;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -41,6 +37,20 @@ function RecipeInput() {
         }
     };
 
+    const healthGoals = [
+        { value: "", label: "-- Select a health goal --", icon: null },
+        { value: "Diabetes Management", label: "Diabetes Management", icon: FaShieldAlt, description: "Low glycemic index, blood sugar control" },
+        { value: "Heart Health", label: "Heart Health", icon: FaHeart, description: "Low cholesterol, heart-friendly fats" },
+        { value: "Weight Management", label: "Weight Management", icon: FaWeight, description: "Calorie control, satiety focus" },
+        { value: "High-Protein", label: "High-Protein", icon: FaDrumstickBite, description: "Muscle building, protein-rich ingredients" },
+        { value: "Brain Health", label: "Brain Health", icon: FaBrain, description: "Omega-3s, antioxidants, cognitive support" },
+        { value: "Iron-Rich", label: "Iron-Rich", icon: FaLeaf, description: "Iron absorption, energy boost" },
+        { value: "Fiber-Rich", label: "Fiber-Rich", icon: FaLeaf, description: "Digestive health, gut microbiome" },
+        { value: "Anti-Inflammatory", label: "Anti-Inflammatory", icon: FaShieldAlt, description: "Turmeric, ginger, inflammation reduction" },
+        { value: "Energy Boost", label: "Energy Boost", icon: FaBrain, description: "Complex carbs, sustained energy" },
+        { value: "Immunity Boost", label: "Immunity Boost", icon: FaShieldAlt, description: "Vitamin C, zinc, immune support" }
+    ];
+
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -51,12 +61,12 @@ function RecipeInput() {
                     id="recipe"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="E.g., Aloo Paratha with butter and curd..."
-                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-[#22B573] text-sm font-sans transition-all min-h-[60px] resize-vertical placeholder-gray-400"
-                    rows={3}
+                    placeholder="E.g., Aloo Paratha with butter and curd... (Include ingredients, quantities, and cooking steps)"
+                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-[#22B573] text-sm font-sans transition-all min-h-[80px] resize-vertical placeholder-gray-400"
+                    rows={4}
                     required
                 />
-                <p className="text-xs text-gray-500 mt-1">Paste your full recipe or write a short description of what you usually cook.</p>
+                <p className="text-xs text-gray-500 mt-1">Include detailed ingredients, quantities, and step-by-step cooking instructions for better transformation.</p>
             </div>
 
             <div>
@@ -73,7 +83,7 @@ function RecipeInput() {
                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                     >
-                        <FaLeaf className="text-base" /> Veg
+                        <FaLeaf className="text-base" /> Vegetarian
                     </button>
                     <button
                         type="button"
@@ -84,28 +94,45 @@ function RecipeInput() {
                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                     >
-                        <FaDrumstickBite className="text-base" /> Non-Veg
+                        <FaDrumstickBite className="text-base" /> Non-Vegetarian
                     </button>
                 </div>
             </div>
 
             <div>
                 <label htmlFor="goal" className="block text-base font-oswald font-bold text-[#22B573] mb-2 tracking-wide">
-                    Nutritional Focus <span className="text-gray-400 font-normal text-xs">(optional)</span>
+                    Health & Nutrition Focus
                 </label>
-                <select
-                    id="goal"
-                    value={goal}
-                    onChange={(e) => setGoal(e.target.value)}
-                    className="w-full p-3 bg-white border-2 border-gray-200 rounded-none shadow-sm focus:outline-none focus:ring-2 focus:ring-[#22B573]/30 text-sm font-sans appearance-none transition-all"
-                >
-                    <option value="">-- Select a nutritional goal --</option>
-                    <option value="High-Protein">High-Protein</option>
-                    <option value="Iron-Rich">Iron-Rich</option>
-                    <option value="Fiber-Rich">Fiber-Rich</option>
-                    <option value="Plant-Based">Plant-Based</option>
-                    <option value="Seasonal Ingredients">Seasonal Ingredients</option>
-                </select>
+                <div className="space-y-2">
+                    <select
+                        id="goal"
+                        value={goal}
+                        onChange={(e) => setGoal(e.target.value)}
+                        className="w-full p-3 bg-white border-2 border-gray-200 rounded-none shadow-sm focus:outline-none focus:ring-2 focus:ring-[#22B573]/30 text-sm font-sans appearance-none transition-all"
+                    >
+                        {healthGoals.map((option, index) => (
+                            <option key={index} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
+                    {goal && healthGoals.find(g => g.value === goal)?.description && (
+                        <p className="text-xs text-gray-600 bg-blue-50 p-2 rounded">
+                            💡 {healthGoals.find(g => g.value === goal)?.description}
+                        </p>
+                    )}
+                </div>
+            </div>
+
+            {/* Recipe Tips */}
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                <h4 className="font-semibold text-blue-800 mb-2">💡 Tips for Better Results</h4>
+                <ul className="text-sm text-blue-700 space-y-1">
+                    <li>• Include specific quantities (e.g., "2 cups rice" not just "rice")</li>
+                    <li>• Mention cooking methods (frying, baking, steaming)</li>
+                    <li>• Include all ingredients including spices and oils</li>
+                    <li>• Specify serving size if known</li>
+                </ul>
             </div>
 
             {error && <p className="text-red-600 text-xs font-semibold text-center mt-1">{error}</p>}
