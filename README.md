@@ -12,5 +12,5 @@ A smart and culturally aware AI-powered app that transforms your everyday recipe
 ## 🛠 Tech Stack
 
 - React + Vite + TailwindCSS  
-- Groq API (LLM-powered transformation)  
+- Gemini API (LLM-powered transformation)  
 - Context API for state management  

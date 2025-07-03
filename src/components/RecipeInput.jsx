@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecipe } from "../context/RecipeContext";
 import { FaLeaf, FaDrumstickBite, FaSyncAlt, FaHeart, FaBrain, FaWeight, FaShieldAlt } from "react-icons/fa";
-import { transformRecipe } from "../api/groq";
+import { transformRecipe } from "../api/transformai";
 
 function RecipeInput() {
     const [input, setInput] = useState("");
