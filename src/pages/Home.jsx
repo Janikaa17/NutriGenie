@@ -20,7 +20,7 @@ function Home() {
     };
     const handleCloseCompare = () => setShowCompareModal(false);
 
-    // Example sample transformation
+    
     const sampleInput = `Aloo Paratha with butter and curd`;
     const sampleOutput = {
         originalRecipeSummary: "Aloo Paratha is a popular North Indian flatbread stuffed with spiced potatoes, typically served with butter and curd.",
@@ -52,7 +52,7 @@ function Home() {
         }
     };
 
-    // Example for comparison modal
+    
     const compareInput = `Poha with potatoes, peanuts, and sev`;
     const compareOutput = {
         title: "Iron-Rich Poha with Greens & Seeds",
@@ -84,9 +84,9 @@ function Home() {
 
     return (
         <div className="relative">
-            {/* Split Hero Section */}
+            
             <section className="w-full min-h-[80vh] flex flex-col md:flex-row items-stretch justify-center bg-black pb-20">
-                {/* Left: Image */}
+                
                 <div className="md:w-1/2 w-full flex items-center justify-center bg-[#f7e7e7] relative border-l-[32px] border-[#22B573] rounded-tr-[80px] rounded-br-[80px] overflow-hidden">
                     <img 
                         src={banner}
@@ -95,7 +95,7 @@ function Home() {
                         style={{ maxHeight: '600px' }}
                     />
                 </div>
-                {/* Right: Text */}
+                
                 <div className="md:w-1/2 w-full flex flex-col justify-center px-8 py-16 md:py-0 bg-black text-left">
                     <div className="max-w-2xl mx-auto">
                         <h1 className="text-4xl md:text-6xl font-oswald font-extrabold leading-tight mt-4 mb-6">
@@ -117,7 +117,7 @@ function Home() {
             </section>
 
             <section className="flex flex-col md:flex-row w-full min-h-[500px] bg-[#FFECEC] items-center">
-                {/* Left: Text content */}
+              
                 <div className="flex-1 flex flex-col justify-center px-8 py-16 md:py-24">
                     <h1 className="text-5xl font-oswald font-extrabold text-black text-left mb-8 leading-tight">WHY THIS MATTERS</h1>
                     <p className="text-lg text-black mb-8 text-left max-w-xl">
@@ -130,7 +130,7 @@ function Home() {
                         LEARN MORE <svg className="inline ml-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="19" x2="19" y2="5" /><polyline points="7 5 19 5 19 17" /></svg>
                     </Link>
                 </div>
-                {/* Right: Image */}
+                
                 <div className="flex-1 flex items-center justify-center bg-[#FFECEC] relative min-h-[400px] pr-12">
                     <img src={picture} alt="Person holding phone" className="max-h-[400px] w-auto object-contain z-10 relative" />
                 </div>
@@ -138,7 +138,7 @@ function Home() {
 
     
 
-            {/* New section: Four cards in white background, 2x2 grid, with colored border and left-aligned content */}
+            
             <section className="w-full bg-[#000000] py-24 px-4">
                 <div className="max-w-4xl mx-auto">
                     <div className="text-center mb-4">

@@ -16,7 +16,7 @@ function About() {
             {/* Hero Section */}
             <section className="w-full bg-[#22B573] pt-16 px-4 pb-0">
                 <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-start gap-8">
-                    {/* Left: Highlighted 'Traditional' */}
+                    
                     <div className="flex flex-col min-w-[220px] md:min-w-[320px]">
                         <span className="text-lg font-oswald font-bold text-black tracking-wide mb-4">ABOUT US</span>
                         <div>
@@ -30,7 +30,7 @@ function About() {
                             </div>
                         </div>
                     </div>
-                    {/* Right: Rest of heading and content */}
+                   
                     <div className="flex-1 flex flex-col justify-center mt-8 md:mt-16">
                         <div className="text-black text-lg space-y-4 max-w-xl">
                             <p>Did you know the trio of chillies, tomatoes, and potatoes — staples of Indian cuisine — were all brought here from South America?<br/>Paneer has roots in the Middle East. Soya? From China.</p>
@@ -38,7 +38,7 @@ function About() {
                         </div>
                     </div>
                 </div>
-                {/* Image below the section */}
+                
                 <div className="max-w-6xl mx-auto mt-8">
                     <div className="w-full h-[260px] md:h-[340px] bg-gray-200 overflow-hidden flex items-center justify-center">
                         <img src={about1} alt="About section visual" className="w-full h-full object-cover object-center" />
@@ -49,19 +49,19 @@ function About() {
             {/* Why This Matters Section */}
             <section className="w-full bg-white pt-24 px-4 pb-32">
                 <div className="max-w-6xl mx-auto">
-                    {/* Large heading at the top */}
+                  
                     <h1 className="text-7xl md:text-7xl font-oswald font-extrabold text-black text-left uppercase mb-5">WHY THIS MATTERS</h1>
                     <p className="text-lg text-black mb-24">India is facing a quiet but serious nutrition crisis.</p>
                     <div className="relative flex flex-col md:flex-row items-start gap-8">
-                        {/* Overlapping background for both columns */}
+                        
                         <div className="hidden md:block absolute -top-8 left-[160px] right-0 h-full bg-[#FFECEC] z-0" style={{minHeight: '480px'}}></div>
-                        {/* Left: Three Boxes */}
+                      
                         <div className="flex flex-col gap-4 w-[220px] md:w-[320px] z-10 mt-4">
                             <div className="bg-[#FF5C5C] text-white h-[90px] md:h-[120px] flex items-center justify-center text-3xl md:text-4xl font-oswald font-extrabold uppercase leading-tight shadow text-center border-0">DIABETIC</div>
                             <div className="bg-white border border-black text-black h-[90px] md:h-[120px] flex items-center justify-center text-3xl md:text-4xl font-oswald font-extrabold uppercase leading-tight shadow text-center">IRON DEFICIENCY</div>
                             <div className="bg-white border border-black text-black h-[90px] md:h-[120px] flex items-center justify-center text-3xl md:text-4xl font-oswald font-extrabold uppercase leading-tight shadow text-center">LOW IMMUNITY</div>
                         </div>
-                        {/* Right: Main Content */}
+                        
                         <div className="flex-1 flex flex-col justify-start mt-8 md:mt-0 z-10">
                             <div className="bg-transparent p-0 md:p-10 rounded-none min-h-[192px] flex flex-col justify-center">
                                 <h2 className="text-5xl font-oswald font-extrabold text-[#FF5C5C] mb-3 uppercase">"You Are What You Eat — </h2>
@@ -79,15 +79,15 @@ function About() {
                 </div>
             </section>
 
-            {/* What Recipe Transformer Does Section */}
+           
             <section className="w-full bg-[#DDF4ED] py-24 px-4">
                 <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
-                    {/* Left: Image Placeholder */}
+                    
                     <div className="flex-shrink-0 w-full md:w-[520px] h-[420px] bg-white overflow-hidden flex items-center justify-center mb-10 md:mb-0">
-                        {/* Replace src with your image if desired */}
+                      
                         <img src={veggie} alt="Recipe Transformer visual" className="w-full h-full object-cover" />
                     </div>
-                     {/* Right: Main Content */}
+                     
                     <div className="flex-1 flex flex-col justify-center">
                         <h2 className="text-7xl font-oswald font-extrabold text-black mb-6">WHAT <span className="text-[#FF5C5C]">NUTRIGENIE</span> DOES</h2>
                         <p className="text-lg text-black mb-8">Discover a smarter way to eat better — starting with your favorite recipe. Whether you input your own or choose from our curated list, our tool instantly transforms it into healthier variations tailored to your needs. Explore options like iron-rich, high-protein, high-fiber, or plant-based versions — all thoughtfully crafted. You'll see a clear before-and-after comparison with a breakdown of the nutritional improvements and the reasoning behind each change. Best of all, every substitution uses seasonal, locally available Indian ingredients, ensuring the results are both health-conscious and rooted in what's familiar.</p>
@@ -100,7 +100,7 @@ function About() {
                 <div className="max-w-6xl mx-auto">
                     <h2 className="text-7xl font-oswald font-extrabold text-white text-center uppercase mb-8">CHOOSE YOUR VARIANT</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                        {/* High-Protein Variant (White) */}
+                        {/* High-Protein Variant */}
                         <div className="bg-[#E8F7F1] p-10 flex flex-col items-start border-b md:border-b-0 md:border-r border-gray-200">
                             <h3 className="text-3xl font-oswald font-extrabold text-[#22B573] uppercase mb-4">High-Protein</h3>
                             <p className="text-base text-gray-700 mb-4">For those who want to build muscle, stay full longer, or support active lifestyles. Protein is essential for growth, repair, and immunity.</p>
@@ -110,7 +110,7 @@ function About() {
                                 <li>Supports metabolism and immune function</li>
                             </ul>
                         </div>
-                        {/* Iron-Rich Variant (Green) */}
+                        {/* Iron-Rich Variant */}
                         <div className="bg-[#22B573] p-10 flex flex-col items-start border-b md:border-b-0 md:border-r border-gray-200">
                             <h3 className="text-3xl font-oswald font-extrabold text-white uppercase mb-4">Iron-Rich</h3>
                             <p className="text-base text-white mb-4">For women, kids, and anyone at risk of anemia or low energy. Iron is vital for healthy blood, energy, and brain function.</p>
@@ -120,7 +120,7 @@ function About() {
                                 <li>Essential for women, kids, and elders</li>
                             </ul>
                         </div>
-                        {/* Plant-Based Variant (Black) */}
+                        {/* Plant-Based Variant*/}
                         <div className="bg-[#E8F7F1] p-10 flex flex-col items-start">
                             <h3 className="text-3xl font-oswald font-extrabold text-[#22B573] uppercase mb-4">Plant-Based</h3>
                             <p className="text-base text-black mb-4">For those who want to eat more plants, reduce cholesterol, or support the environment. Plant-based diets are rich in fiber, vitamins, and antioxidants.</p>
