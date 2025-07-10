@@ -13,25 +13,11 @@ function Navbar() {
     return (
         <nav className="bg-[#000000] shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center h-16 relative">
+                <div className="flex items-center h-16">
                     {/* Logo / App Title Name*/}
-                    <Link to="/" className="text-xl font-bold text-[xs./.o0#22B573]">
-                        <img src={logo} alt="Healthify Logo" className="w-45 h-12" />
+                    <Link to="/" className="flex items-center gap-3">
+                        <img src={logo} alt="NutriGenie Logo" className="w-100 h-40" />
                     </Link>
-                    {/* Navigation Links */}
-                    <div className="absolute left-1/2 transform -translate-x-1/2">
-                        <div className="flex items-center space-x-8">
-                            <Link to="/" className={linkClasses('/') + ' uppercase tracking-wider'}>
-                                Home
-                            </Link>
-                            <Link to="/transformer" className={linkClasses('/transformer') + ' uppercase tracking-wider'}>
-                                Transform
-                            </Link>
-                            <Link to="/about" className={linkClasses('/about') + ' uppercase tracking-wider'}>
-                                About
-                            </Link>
-                        </div>
-                    </div>
                 </div>
             </div>
         </nav>

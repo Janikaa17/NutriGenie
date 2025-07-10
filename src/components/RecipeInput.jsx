@@ -1,15 +1,18 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useRecipe } from "../context/RecipeContext";
-import { FaLeaf, FaDrumstickBite, FaSyncAlt, FaHeart, FaBrain, FaWeight, FaShieldAlt } from "react-icons/fa";
+import { FaLeaf, FaDrumstickBite, FaSyncAlt, FaHeart, FaBrain, FaWeight, FaShieldAlt, FaExclamationTriangle } from "react-icons/fa";
 import { transformRecipe } from "../api/transformai";
 
 function RecipeInput() {
-    const [input, setInput] = useState("");
+    const location = useLocation();
+    const [input, setInput] = useState(location.state && location.state.input ? location.state.input : "");
     const [goal, setGoal] = useState("");
     const [dietaryPreference, setDietaryPreference] = useState("veg");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [cacheStatus, setCacheStatus] = useState(null);
+    const [retryCount, setRetryCount] = useState(0);
     const { setRecipeInput, setRecipeOutput } = useRecipe();
     const navigate = useNavigate();
 
@@ -17,24 +20,54 @@ function RecipeInput() {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        setCacheStatus(null);
+        setRetryCount(0);
 
-        try {
-            const recipeData = {
-                input,
-                goal,
-                dietaryPreference
-            };
-            
-            const result = await transformRecipe(recipeData);
-            setRecipeInput(input);
-            setRecipeOutput(result);
-            navigate("/output");
-        } catch (err) {
-            console.error("API error", err);
-            setError("Failed to transform recipe. Please try again.");
-        } finally {
-            setLoading(false);
+        const recipeData = {
+            input,
+            goal,
+            dietaryPreference
+        };
+
+        let attempts = 0;
+        const maxRetries = 2;
+        const timeoutMs = 30000;
+        let lastError = null;
+
+        while (attempts <= maxRetries) {
+            attempts++;
+            try {
+                // Timeout logic
+                const result = await Promise.race([
+                    transformRecipe(recipeData),
+                    new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), timeoutMs))
+                ]);
+                
+                // Use cache status from API response
+                setCacheStatus(result._cacheStatus || 'fresh');
+                setRecipeInput(input);
+                setRecipeOutput(result);
+                setLoading(false);
+                navigate("/output");
+                return;
+            } catch (err) {
+                lastError = err;
+                setRetryCount(attempts);
+                if (err.message === "timeout") {
+                    setError("The server is taking too long to respond. Please try again in a few seconds.");
+                    break;
+                }
+                // Check for API down/503
+                if (err.message && (err.message.includes('503') || err.message.toLowerCase().includes('service unavailable'))) {
+                    setError("The AI service is currently overloaded or unavailable. Please try again in a few minutes.");
+                    break;
+                }
+                if (attempts > maxRetries) {
+                    setError("Failed to transform recipe after multiple attempts. Please try again later.");
+                }
+            }
         }
+        setLoading(false);
     };
 
     const healthGoals = [
@@ -52,7 +85,17 @@ function RecipeInput() {
     ];
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 relative">
+            {/* Loading Spinner Overlay */}
+            {loading && (
+                <div className="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center z-50 rounded-lg">
+                    <FaSyncAlt className="animate-spin text-4xl text-[#22B573] mb-4" />
+                    <span className="text-white text-lg font-bold">Transforming your recipe...</span>
+                    {retryCount > 0 && (
+                        <span className="text-xs text-gray-300 mt-2">Retrying... (Attempt {retryCount + 1})</span>
+                    )}
+                </div>
+            )}
             <div>
                 <label htmlFor="recipe" className="block text-base font-oswald font-bold text-[#22B573] mb-2 tracking-wide">
                     Paste Your Recipe
@@ -62,7 +105,7 @@ function RecipeInput() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="E.g., Aloo Paratha with butter and curd... (Include ingredients, quantities, and cooking steps)"
-                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-[#22B573] text-sm font-sans transition-all min-h-[80px] resize-vertical placeholder-gray-400"
+                    className="w-full p-3 bg-[#1a1a1a]/40 backdrop-blur-sm border border-[#22B573]/30 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-[#22B573] text-sm font-sans transition-all min-h-[80px] resize-vertical placeholder-gray-400 text-white"
                     rows={4}
                     required
                 />
@@ -108,10 +151,10 @@ function RecipeInput() {
                         id="goal"
                         value={goal}
                         onChange={(e) => setGoal(e.target.value)}
-                        className="w-full p-3 bg-white border-2 border-gray-200 rounded-none shadow-sm focus:outline-none focus:ring-2 focus:ring-[#22B573]/30 text-sm font-sans appearance-none transition-all"
+                        className="w-full p-3 bg-[#1a1a1a]/40 backdrop-blur-sm border-2 border-[#22B573]/30 rounded-none shadow-sm focus:outline-none focus:ring-2 focus:ring-[#22B573]/30 text-sm font-sans appearance-none transition-all text-white"
                     >
                         {healthGoals.map((option, index) => (
-                            <option key={index} value={option.value}>
+                            <option key={index} value={option.value} className="text-black">
                                 {option.label}
                             </option>
                         ))}
@@ -125,9 +168,9 @@ function RecipeInput() {
             </div>
 
             {/* Recipe Tips */}
-            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
-                <h4 className="font-semibold text-blue-800 mb-2">💡 Tips for Better Results</h4>
-                <ul className="text-sm text-blue-700 space-y-1">
+            <div className="bg-green-50 border-l-4 border-[#22B573] p-4 rounded">
+                <h4 className="font-semibold text-[#22B573] mb-2">💡 Tips for Better Results</h4>
+                <ul className="text-sm text-green-700 space-y-1">
                     <li>• Include specific quantities (e.g., "2 cups rice" not just "rice")</li>
                     <li>• Mention cooking methods (frying, baking, steaming)</li>
                     <li>• Include all ingredients including spices and oils</li>
@@ -135,7 +178,49 @@ function RecipeInput() {
                 </ul>
             </div>
 
-            {error && <p className="text-red-600 text-xs font-semibold text-center mt-1">{error}</p>}
+            {error && (
+                <div className="flex items-center justify-center gap-2 text-red-600 text-xs font-semibold text-center mt-1 bg-red-100 p-2 rounded">
+                    <FaExclamationTriangle className="text-base" />
+                    {error}
+                </div>
+            )}
+            
+            {cacheStatus && (
+                <div className={`text-xs font-semibold text-center mt-2 p-2 rounded ${
+                    cacheStatus === 'cached' 
+                        ? 'bg-green-100 text-green-700' 
+                        : 'bg-blue-100 text-blue-700'
+                }`}>
+                    {cacheStatus === 'cached' 
+                        ? '⚡ Result from cache (instant)' 
+                        : '🔄 Fresh transformation'
+                    }
+                </div>
+            )}
+
+            {/* Cache Debug Info (only in development) */}
+            {process.env.NODE_ENV === 'development' && (
+                <div className="text-xs text-gray-500 bg-gray-100 p-2 rounded">
+                    <details>
+                        <summary className="cursor-pointer font-semibold">Cache Debug Info</summary>
+                        <div className="mt-2 space-y-1">
+                            <div>Cache Stats: {window.recipeCache ? JSON.stringify(window.recipeCache.getStats(), null, 2) : 'Not available'}</div>
+                            <button 
+                                onClick={() => window.recipeCache?.debug()}
+                                className="text-blue-600 hover:underline"
+                            >
+                                Debug Cache
+                            </button>
+                            <button 
+                                onClick={() => window.recipeCache?.clear()}
+                                className="text-red-600 hover:underline ml-2"
+                            >
+                                Clear Cache
+                            </button>
+                        </div>
+                    </details>
+                </div>
+            )}
 
             <button
                 className="w-full flex items-center justify-center gap-2 py-3 bg-[#22B573] text-white font-oswald font-bold text-base rounded-none shadow-md hover:bg-[#328E6E] transition-colors disabled:opacity-50 tracking-wide focus:outline-none focus:ring-2 focus:ring-[#22B573]/30"
