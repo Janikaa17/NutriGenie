@@ -18,6 +18,10 @@ function RecipeInput() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!goal) {
+            setError('Please select a health & nutrition goal before transforming your recipe.');
+            return;
+        }
         setLoading(true);
         setError(null);
         setCacheStatus(null);

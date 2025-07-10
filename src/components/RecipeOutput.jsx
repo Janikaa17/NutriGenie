@@ -64,17 +64,13 @@ function RecipeOutput() {
     function getShareText() {
         const recipeName = transformedRecipe.title || "this recipe";
         const healthGoal = recipeOutput.goal || "healthier";
-        const link = window.location.href;
-        
-        // Create engaging intro
+        // Use the current location, but replace the domain with localhost for clipboard
+        let link = window.location.href.replace("https://nutri-genie-app.vercel.app", "http://localhost:5173");
         let text = `🧞‍♂️✨ Just transformed my recipe into a ${healthGoal} version with AI magic! 🎯\n\n`;
         text += `*${recipeName}*\n`;
-        
         if (transformedRecipe.description) {
             text += `${transformedRecipe.description}\n\n`;
         }
-        
-        // Add key health benefits
         if (transformedRecipe.nutritionalBenefits && transformedRecipe.nutritionalBenefits.length > 0) {
             text += `💚 *Health Benefits:*\n`;
             transformedRecipe.nutritionalBenefits.slice(0, 2).forEach(benefit => {
@@ -82,8 +78,6 @@ function RecipeOutput() {
             });
             text += `\n`;
         }
-        
-        // Add ingredients (shorter version for social media)
         if (transformedRecipe.ingredients) {
             text += `🥘 *Key Ingredients:*\n`;
             transformedRecipe.ingredients.slice(0, 6).forEach(ing => {
@@ -94,16 +88,11 @@ function RecipeOutput() {
             }
             text += `\n`;
         }
-        
-        // Add cooking time and difficulty
         if (transformedRecipe.estimatedCookingTime || transformedRecipe.difficultyLevel) {
             text += `⏱️ *Cooking:* ${transformedRecipe.estimatedCookingTime || '30 min'} | ${transformedRecipe.difficultyLevel || 'Medium'}\n\n`;
         }
-        
-        // Add call to action
         text += `🔥 Try this AI-powered recipe transformation yourself! → ${link}\n\n`;
         text += `#HealthyCooking #RecipeAI #${healthGoal.replace(/\s+/g, '')} #FoodTransformation`;
-        
         return text;
     }
 
@@ -301,7 +290,26 @@ function RecipeOutput() {
                                 `Your wish for a guilt-free ${transformedRecipe.title || "recipe"} is granted – now smarter, lighter, and still irresistible.`}
                         </span>
                     </div>
-                    <div className="text-xs text-gray-500 text-center mb-2 text-justify">Transformed with science-backed swaps to make it 40% healthier — without losing the flavor you love.</div>
+                    {/* Nutrition Section */}
+                    {(transformedRecipe.keyNutrients && (transformedRecipe.keyNutrients.protein || transformedRecipe.keyNutrients.fiber || transformedRecipe.keyNutrients.healthyFats || transformedRecipe.keyNutrients.complexCarbs)) && (
+                        <div className="bg-green-50 border border-green-400 p-3 mb-3 rounded-xl shadow">
+                            <div className="text-base font-semibold text-green-800 mb-2">Key Nutrients (per serving)</div>
+                            <div className="grid grid-cols-2 gap-y-2 gap-x-8 text-sm">
+                                {transformedRecipe.keyNutrients.protein && (
+                                    <div>Protein: <span className="font-bold text-base">{transformedRecipe.keyNutrients.protein}</span></div>
+                                )}
+                                {transformedRecipe.keyNutrients.fiber && (
+                                    <div>Fiber: <span className="font-bold text-base">{transformedRecipe.keyNutrients.fiber}</span></div>
+                                )}
+                                {transformedRecipe.keyNutrients.healthyFats && (
+                                    <div>Healthy Fats: <span className="font-bold text-base">{transformedRecipe.keyNutrients.healthyFats}</span></div>
+                                )}
+                                {transformedRecipe.keyNutrients.complexCarbs && (
+                                    <div>Complex Carbs: <span className="font-bold text-base">{transformedRecipe.keyNutrients.complexCarbs}</span></div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                     {/* Ingredients Optimized Section */}
                     <div className="bg-white rounded-lg shadow p-4 mb-4">
                         <h4 className="text-2xl font-oswald font-bold text-[#22B573] mb-4">Ingredients Optimized</h4>
@@ -310,7 +318,7 @@ function RecipeOutput() {
                                 <thead>
                                     <tr>
                                         <th className="px-2 py-1 text-[#22B573] font-bold">Replaced Ingredient</th>
-                                        <th className="px-2 py-1 text-[#22B573] font-bold">Replacement</th>
+                                        <th className="px-2 py-1 text-[#22B573] font-bold">Replacement/Addition</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -404,7 +412,7 @@ function RecipeOutput() {
 
                     {/* --- Nutritional Benefits Section --- */}
                     {transformedRecipe.nutritionalBenefits && transformedRecipe.nutritionalBenefits.length > 0 && (
-                        <div className="bg-green-50 border-l-4 border-green-400 p-3 mb-4 rounded-xl shadow">
+                        <div className="bg-green-50 border border-green-400 p-3 mb-4 rounded-xl shadow">
                             <h5 className="font-semibold text-green-800 mb-2">How This Recipe Supports {recipeOutput.goal || 'Your Health'}</h5>
                             <ul className="list-disc list-inside text-sm text-green-800">
                                 {transformedRecipe.nutritionalBenefits.map((benefit, i) => (
@@ -419,14 +427,21 @@ function RecipeOutput() {
                         <div className="flex flex-col items-center mb-4 mt-6">
                             {/* Lamp image from assets with tilting animation */}
                             <div className="mb-2 flex justify-center">
-                                <img
-                                    src={lampImg}
-                                    alt="Genie Lamp"
-                                    className={`w-16 h-16 cursor-pointer opacity-80 hover:opacity-100 lamp-tilt ${showTip ? 'animate-bounce' : ''}`}
-                                    onClick={handleLampTouch}
-                                />
                                 {!showTip && (
-                                    <div className="text-xs text-gray-500 text-center w-full">You have one more wish left, rub thrice in order to get tips!</div>
+                                    <div className="relative flex flex-row items-end mt-2 mb-2 w-full" style={{ minHeight: '70px' }}>
+                                        <img
+                                            src={lampImg}
+                                            alt="Genie Lamp"
+                                            className={`w-16 h-16 cursor-pointer opacity-80 hover:opacity-100 lamp-tilt ${showTip ? 'animate-bounce' : ''}`}
+                                            onClick={handleLampTouch}
+                                            style={{ marginRight: '8px', marginLeft: '0', zIndex: 10 }}
+                                        />
+                                        <div className="relative">
+                                            <div className="bg-white/90 text-[#052e16] font-semibold text-sm px-4 py-2 rounded-2xl shadow-xl max-w-[220px] w-fit text-center break-words">
+                                                You have one more wish left, rub thrice in order to get a tip!
+                                            </div>
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                             {/* Show tip if lamp is 'rubbed' (after 3 touches) */}

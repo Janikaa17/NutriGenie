@@ -218,11 +218,11 @@ function Home() {
                     See How It Works
                 </button>
                 {/* Marquee */}
-                <div className="w-full max-w-xl mx-auto overflow-hidden relative min-h-[96px] h-28 mb-16">
-                    <div className="text-xl text-gray-200 font-quicksand font-light mb-3 ml-2">Try one of these</div>
-                    <div className="marquee flex gap-8 items-center h-20 whitespace-nowrap w-max" role="list" aria-label="Sample recipes to try">
+                <div className="w-full max-w-xl mx-auto overflow-hidden relative min-h-[96px] h-25 mb-16">
+                    <div className="text-xl text-gray-200 pb-5 font-quicksand font-light mb-5 ml-2">Try one of these</div>
+                    <div className="marquee flex gap-8 items-center h-28 whitespace-nowrap w-max mt-5" role="list" aria-label="Sample recipes to try">
                         {[
-                            { title: "Dosa with Coconut Chutney", summary: "Rice, urad dal, coconut, green chili, curry leaves" },
+                            { titlxe: "Dosa with Coconut Chutney", summary: "Rice, urad dal, coconut, green chili, curry leaves" },
                             { title: "Rajma Chawal", summary: "Kidney beans, rice, tomato, onion, ginger, garlic" },
                             { title: "Aloo Paratha with Curd", summary: "Whole wheat flour, potato, spices, yogurt" },
                             { title: "Pav Bhaji", summary: "Potato, tomato, peas, capsicum, pav buns, butter" },
@@ -233,7 +233,7 @@ function Home() {
                                 key={idx}
                                 onClick={() => setInput(item.title + ': ' + item.summary)}
                                 onKeyDown={(e) => handleKeyDown(e, () => setInput(item.title + ': ' + item.summary))}
-                                className="min-w-[220px] sm:min-w-[280px] md:min-w-[340px] bg-[#181c1b] border-b-2 border-b-[#22B573] px-8 py-5 text-white shadow hover:bg-[#22B573] hover:text-black transition-colors duration-150 flex flex-col items-start gap-1 rounded-none overflow-hidden whitespace-nowrap text-ellipsis focus:outline-2 focus:outline-[#22B573] focus:outline-offset-2"
+                                className="min-w-[220px] sm:min-w-[280px] md:min-w-[340px] min-h-[100px] bg-[#181c1b] border-b-2 border-b-[#22B573] px-8 py-5 pb-12 text-white shadow hover:bg-[#22B573] hover:text-black transition-colors duration-150 flex flex-col items-start gap-1 rounded-none overflow-hidden text-ellipsis focus:outline-2 focus:outline-[#22B573] focus:outline-offset-2"
                                 style={{marginRight: '32px'}} 
                                 role="listitem"
                                 aria-label={`Try recipe: ${item.title} - ${item.summary}`}
@@ -255,13 +255,13 @@ function Home() {
                                 key={"dup-"+idx}
                                 onClick={() => setInput(item.title + ': ' + item.summary)}
                                 onKeyDown={(e) => handleKeyDown(e, () => setInput(item.title + ': ' + item.summary))}
-                                className="min-w-[220px] sm:min-w-[280px] md:min-w-[340px] bg-[#181c1b] border-b-2 border-b-[#22B573] px-8 py-5 text-white shadow hover:bg-[#22B573] hover:text-black transition-colors duration-150 flex flex-col items-start gap-1 rounded-none overflow-hidden whitespace-nowrap text-ellipsis focus:outline-2 focus:outline-[#22B573] focus:outline-offset-2"
+                                className="min-w-[220px] sm:min-w-[280px] md:min-w-[340px] min-h-[100px] bg-[#181c1b] border-b-2 border-b-[#22B573] px-8 py-5 pb-12 text-white shadow hover:bg-[#22B573] hover:text-black transition-colors duration-150 flex flex-col items-start gap-1 rounded-none overflow-hidden text-ellipsis focus:outline-2 focus:outline-[#22B573] focus:outline-offset-2"
                                 style={{marginRight: '32px'}} 
                                 role="listitem"
                                 aria-label={`Try recipe: ${item.title} - ${item.summary}`}
                             >
-                                <div className="font-bold text-base whitespace-nowrap text-ellipsis overflow-hidden w-full">{item.title}</div>
-                                <div className="text-xs text-gray-200 whitespace-nowrap text-ellipsis overflow-hidden w-full">{item.summary}</div>
+                                <div className="font-sans font-extrabold text-base whitespace-nowrap text-ellipsis overflow-hidden w-full">{item.title}</div>
+                                <div className="text-xs text-gray-200 font-sans font-light whitespace-nowrap text-ellipsis overflow-hidden w-full">{item.summary}</div>
                             </button>
                         ))}
                     </div>
