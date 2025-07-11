@@ -64,8 +64,9 @@ function RecipeOutput() {
     function getShareText() {
         const recipeName = transformedRecipe.title || "this recipe";
         const healthGoal = recipeOutput.goal || "healthier";
-        // Use the deployed domain for sharing
-        let link = window.location.href.replace('http://localhost:5173', 'https://nutri-genie-app.vercel.app');
+        // Use the deployed domain for sharing, without any path
+        let url = new URL(window.location.href.replace('http://localhost:5173', 'https://nutri-genie-app.vercel.app'));
+        let link = url.origin;
         let text = `🧞‍♂️✨ Just transformed my recipe into a ${healthGoal} version with AI magic! 🎯\n\n`;
         text += `*${recipeName}*\n`;
         if (transformedRecipe.description) {
