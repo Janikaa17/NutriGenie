@@ -1,32 +1,30 @@
-// Backend cache utility for recipe transformations (Node.js only) with security
+
 class BackendRecipeCache {
     constructor() {
         this.cache = new Map();
         this.maxSize = 200;
-        this.ttl = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+        this.ttl = 24 * 60 * 60 * 1000; 
         this.hitCount = 0;
         this.missCount = 0;
     }
 
-    // Generate secure cache key using hash
     generateKey(recipeData) {
-        const { input, goal, dietaryPreference } = recipeData;
-        // Normalize the input to handle whitespace and case differences
+        const { input, goal, dietaryPreference, seasonality, region } = recipeData;
         const normalizedInput = input.toLowerCase().trim().replace(/\s+/g, ' ');
-        const keyString = `${normalizedInput}_${goal || 'general'}_${dietaryPreference || 'veg'}`;
+        const keyString = `${normalizedInput}_${goal || 'general'}_${dietaryPreference || 'veg'}_${seasonality || 'noseason'}_${region || 'noregion'}`;
         
-        // Create a simple hash for security (in production, use crypto module)
+        //simple hash for security
         return this.hashString(keyString);
     }
 
-    // Simple hash function (for production, use Node.js crypto module)
+    //simple hash function
     hashString(str) {
         let hash = 0;
         if (str.length === 0) return hash.toString();
         for (let i = 0; i < str.length; i++) {
             const char = str.charCodeAt(i);
             hash = ((hash << 5) - hash) + char;
-            hash = hash & hash; // Convert to 32-bit integer
+            hash = hash & hash; 
         }
         return 'cache_' + Math.abs(hash).toString(36);
     }
@@ -83,7 +81,7 @@ class BackendRecipeCache {
         console.log('Backend cache cleared');
     }
 
-    // Get cache stats (without exposing sensitive data)
+    // Get cache stats
     getStats() {
         return {
             size: this.cache.size,
@@ -95,18 +93,36 @@ class BackendRecipeCache {
         };
     }
 
-    // Debug method to log cache contents (without sensitive data)
+    // Debug method to log cache contents
     debug() {
         console.log('=== BACKEND CACHE DEBUG ===');
         console.log('Cache size:', this.cache.size);
         console.log('Hit rate:', this.getStats().hitRate);
         console.log('Cache entries count:', this.cache.size);
+        console.log('Cache includes: input, goal, dietaryPreference, seasonality, region');
         console.log('==========================');
+    }
+
+    // Clear old cache entries that don't include the new seasonal and regional fields
+    clearOldCacheEntries() {
+        let clearedCount = 0;
+        for (const [key, value] of this.cache.entries()) {
+            // Check if the cached data includes the new fields
+            if (!value.data.seasonality || !value.data.region) {
+                this.cache.delete(key);
+                clearedCount++;
+            }
+        }
+        if (clearedCount > 0) {
+            console.log(`Cleared ${clearedCount} old backend cache entries that don't include seasonal/regional data`);
+        }
     }
 }
 
-// Create singleton instance for backend
 const backendRecipeCache = new BackendRecipeCache();
+
+// Clear old cache entries on initialization
+backendRecipeCache.clearOldCacheEntries();
 
 console.log('Backend recipe cache initialized');
 

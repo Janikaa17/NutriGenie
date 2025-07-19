@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useRecipe } from "../context/RecipeContext";
-import { FaLeaf, FaDrumstickBite, FaSyncAlt, FaHeart, FaBrain, FaWeight, FaShieldAlt, FaExclamationTriangle } from "react-icons/fa";
+import { FaLeaf, FaDrumstickBite, FaSyncAlt, FaHeart, FaBrain, FaWeight, FaShieldAlt, FaExclamationTriangle, FaCalendarAlt, FaMapMarkerAlt, FaHeartbeat } from "react-icons/fa";
 import { transformRecipe } from "../api/transformai";
 
 function RecipeInput() {
@@ -9,19 +9,42 @@ function RecipeInput() {
     const [input, setInput] = useState(location.state && location.state.input ? location.state.input : "");
     const [goal, setGoal] = useState("");
     const [dietaryPreference, setDietaryPreference] = useState("veg");
+    const [seasonality, setSeasonality] = useState("");
+    const [region, setRegion] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [cacheStatus, setCacheStatus] = useState(null);
     const [retryCount, setRetryCount] = useState(0);
-    const { setRecipeInput, setRecipeOutput } = useRecipe();
+    const { setRecipeInput, setRecipeOutput, setHealthGoal: setContextHealthGoal, setSeasonality: setContextSeasonality, setRegion: setContextRegion, setDietaryPreference: setContextDietaryPreference } = useRecipe();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Validate all required fields
+        const validationErrors = [];
+        
+        if (!input.trim()) {
+            validationErrors.push('Please paste your recipe');
+        }
+        
         if (!goal) {
-            setError('Please select a health & nutrition goal before transforming your recipe.');
+            validationErrors.push('Please select a health & nutrition goal');
+        }
+        
+        if (!seasonality) {
+            validationErrors.push('Please select a season');
+        }
+        
+        if (!region) {
+            validationErrors.push('Please select a region');
+        }
+        
+        if (validationErrors.length > 0) {
+            setError(`Please complete all fields: ${validationErrors.join(', ')}`);
             return;
         }
+        
         setLoading(true);
         setError(null);
         setCacheStatus(null);
@@ -30,7 +53,9 @@ function RecipeInput() {
         const recipeData = {
             input,
             goal,
-            dietaryPreference
+            dietaryPreference,
+            seasonality,
+            region
         };
 
         let attempts = 0;
@@ -51,6 +76,10 @@ function RecipeInput() {
                 setCacheStatus(result._cacheStatus || 'fresh');
                 setRecipeInput(input);
                 setRecipeOutput(result);
+                setContextHealthGoal(goal);
+                setContextSeasonality(seasonality);
+                setContextRegion(region);
+                setContextDietaryPreference(dietaryPreference);
                 setLoading(false);
                 navigate("/output");
                 return;
@@ -88,6 +117,23 @@ function RecipeInput() {
         { value: "Immunity Boost", label: "Immunity Boost", icon: FaShieldAlt, description: "Vitamin C, zinc, immune support" }
     ];
 
+    const seasons = [
+        { value: "", label: "-- Select season --" },
+        { value: "Summer", label: "Summer Season", description: "Watermelon, muskmelon, mango, cucumbers, tomatoes, pumpkins, gourds, jackfruit" },
+        { value: "Monsoon", label: "Monsoon Season", description: "Rice, maize, millets, pulses, sugarcane, leafy greens, fresh corn, beans, okra, lychee, jamun, guava" },
+        { value: "Autumn", label: "Autumn Season", description: "Lettuce, green peas, onions, spinach - transitional quick-growing crops" },
+        { value: "Winter", label: "Winter Season", description: "Wheat, barley, mustard, gram, legumes, oranges, guavas, carrots, strawberries, root vegetables" }
+    ];
+
+    const regions = [
+        { value: "", label: "-- Select region --" },
+        { value: "Northern Indo-Gangetic Plains", label: "Northern Indo-Gangetic Plains", description: "Wheat, rice, dairy, mustard, pulses, guava, citrus - Punjab, Haryana, UP, Uttarakhand, Western Bihar" },
+        { value: "Thar Desert & Western Drylands", label: "Thar Desert & Western Drylands", description: "Millets (bajra, jowar), gram, pulses, oilseeds, dairy, pickles, dried vegetables - Rajasthan, Gujarat, Western MP, Kutch" },
+        { value: "Eastern River Valleys & Coastal Plains", label: "Eastern River Valleys & Coastal Plains", description: "Rice, fish, seafood, leafy greens, bananas, jackfruits, mustard oil - West Bengal, Odisha, Assam, Bihar, Jharkhand" },
+        { value: "Southern Peninsular Plateau & Coast", label: "Southern Peninsular Plateau & Coast", description: "Rice, coconut, pulses, spices, seafood, tropical fruits, tamarind - Tamil Nadu, Kerala, Andhra Pradesh, Telangana, Karnataka" },
+        { value: "Central Highlands & Tribal Terrains", label: "Central Highlands & Tribal Terrains", description: "Millets, pulses, forest produce, wild greens, tubers, local vegetables - Madhya Pradesh, Chhattisgarh, Vidarbha, tribal areas" }
+    ];
+
     return (
         <form onSubmit={handleSubmit} className="space-y-6 relative">
             {/* Loading Spinner Overlay */}
@@ -102,7 +148,7 @@ function RecipeInput() {
             )}
             <div>
                 <label htmlFor="recipe" className="block text-base font-oswald font-bold text-[#22B573] mb-2 tracking-wide">
-                    Paste Your Recipe
+                    Paste Your Recipe <span className="text-green-500">*</span>
                 </label>
                 <textarea
                     id="recipe"
@@ -148,7 +194,8 @@ function RecipeInput() {
 
             <div>
                 <label htmlFor="goal" className="block text-base font-oswald font-bold text-[#22B573] mb-2 tracking-wide">
-                    Health & Nutrition Focus
+                    <FaHeartbeat className="inline mr-2" />
+                    Health & Nutrition Focus <span className="text-green-500">*</span>
                 </label>
                 <div className="space-y-2">
                     <select
@@ -171,6 +218,73 @@ function RecipeInput() {
                 </div>
             </div>
 
+            <div>
+                <label htmlFor="seasonality" className="block text-base font-oswald font-bold text-[#22B573] mb-2 tracking-wide">
+                    <FaCalendarAlt className="inline mr-2" />
+                    Seasonality <span className="text-green-500">*</span>
+                </label>
+                <div className="space-y-2">
+                    <select
+                        id="seasonality"
+                        value={seasonality}
+                        onChange={(e) => setSeasonality(e.target.value)}
+                        className="w-full p-3 bg-[#1a1a1a]/40 backdrop-blur-sm border-2 border-[#22B573]/30 rounded-none shadow-sm focus:outline-none focus:ring-2 focus:ring-[#22B573]/30 text-sm font-sans appearance-none transition-all text-white"
+                    >
+                        {seasons.map((option, index) => (
+                            <option key={index} value={option.value} className="text-black">
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                
+            </div>
+
+            <div>
+                <label htmlFor="region" className="block text-base font-oswald font-bold text-[#22B573] mb-2 tracking-wide">
+                    <FaMapMarkerAlt className="inline mr-2" />
+                    Region <span className="text-green-500">*</span>
+                </label>
+                <div className="space-y-2">
+                    <select
+                        id="region"
+                        value={region}
+                        onChange={(e) => setRegion(e.target.value)}
+                        className="w-full p-3 bg-[#1a1a1a]/40 backdrop-blur-sm border-2 border-[#22B573]/30 rounded-none shadow-sm focus:outline-none focus:ring-2 focus:ring-[#22B573]/30 text-sm font-sans appearance-none transition-all text-white"
+                    >
+                        {regions.map((option, index) => (
+                            <option key={index} value={option.value} className="text-black">
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                
+                {/* Region Quick Reference */}
+                <div className="bg-[#1a1a1a]/40 border border-[#22B573]/50 p-3">
+                    <h5 className="text-sm font-semibold text-green-500 mb-2">Region Quick Reference</h5>
+                    <div className="grid grid-cols-1 text-xs divide-y divide-black">
+                        {regions.filter(r => r.value).map((regionOption, index) => (
+                            <div key={index} className="flex justify-between items-start p-2 bg-green-50 border-l-3 Sborder-gray-300 hover:border-[#22B573] transition-colors">
+                                <div className="flex-1">
+                                    <span className="font-semibold text-green-700">{regionOption.label}</span>
+                                    <div className="text-gray-600 mt-1">
+                                        <span className="font-medium">States:</span> {regionOption.description.split(' - ')[1] || regionOption.description}
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setRegion(regionOption.value)}
+                                    className="ml-2 px-2 py-1 bg-black text-white text-xs hover:bg-[#328E6E] transition-colors"
+                                >
+                                    Select
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
             {/* Recipe Tips */}
             <div className="bg-green-50 border-l-4 border-[#22B573] p-4 rounded">
                 <h4 className="font-semibold text-[#22B573] mb-2">💡 Tips for Better Results</h4>
@@ -179,6 +293,7 @@ function RecipeInput() {
                     <li>• Mention cooking methods (frying, baking, steaming)</li>
                     <li>• Include all ingredients including spices and oils</li>
                     <li>• Specify serving size if known</li>
+                    <li>• Select season and region for locally available ingredients</li>
                 </ul>
             </div>
 
@@ -226,10 +341,16 @@ function RecipeInput() {
                 </div>
             )}
 
+            
+
             <button
-                className="w-full flex items-center justify-center gap-2 py-3 bg-[#22B573] text-white font-oswald font-bold text-base rounded-none shadow-md hover:bg-[#328E6E] transition-colors disabled:opacity-50 tracking-wide focus:outline-none focus:ring-2 focus:ring-[#22B573]/30"
+                className={`w-full flex items-center justify-center gap-2 py-3 font-oswald font-bold text-base rounded-none shadow-md transition-colors tracking-wide focus:outline-none focus:ring-2 focus:ring-[#22B573]/30 ${
+                    !input.trim() || !goal || !seasonality || !region || loading
+                        ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                        : 'bg-[#22B573] text-white hover:bg-[#328E6E]'
+                }`}
                 type="submit"
-                disabled={loading}
+                disabled={!input.trim() || !goal || !seasonality || !region || loading}
             >
                 <FaSyncAlt className={loading ? 'animate-spin' : ''} />
                 {loading ? "Transforming..." : "Transform Recipe"}

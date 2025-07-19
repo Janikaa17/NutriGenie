@@ -9,24 +9,24 @@
 
 /* Genie subtle floating, rotation, and glow pulse */
 .genie-float {
-  animation: genieFloat 4.5s ease-in-out infinite;
+  animation: genieFloat 7s ease-in-out infinite;
 }
 @keyframes genieFloat {
-  0%, 100% { transform: translateY(0) rotate(-2deg); }
-  25% { transform: translateY(-8px) rotate(2deg); }
-  50% { transform: translateY(-16px) rotate(-2deg); }
-  75% { transform: translateY(-8px) rotate(2deg); }
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  25% { transform: translateY(-4px) rotate(1deg); }
+  50% { transform: translateY(-8px) rotate(-1deg); }
+  75% { transform: translateY(-4px) rotate(1deg); }
 }
 .genie-glow-pulse {
-  animation: genieGlowPulse 3.5s ease-in-out infinite;
+  animation: genieGlowPulse 6s ease-in-out infinite;
 }
 @keyframes genieGlowPulse {
-  0%, 100% { filter: drop-shadow(0 0 32px #22B57366) drop-shadow(0 0 8px #22B57333); }
-  50% { filter: drop-shadow(0 0 48px #22B57399) drop-shadow(0 0 16px #22B57355); }
+  0%, 100% { filter: drop-shadow(0 0 16px #22B57344) drop-shadow(0 0 4px #22B57322); }
+  50% { filter: drop-shadow(0 0 24px #22B57366) drop-shadow(0 0 8px #22B57333); }
 }
 
 .float-genie {
-  animation: floatGenie 3s ease-in-out infinite;
+  animation: floatGenie 6s ease-in-out infinite;
 }
 
 @keyframes floatGenie {
@@ -36,7 +36,7 @@
   }
 
   50% {
-    transform: translateY(-18px);
+    transform: translateY(-8px);
   }
 }
 
@@ -47,7 +47,7 @@
   -webkit-background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  animation: gradient-move 4s linear infinite;
+  animation: gradient-move 8s linear infinite;
 }
 
 @keyframes gradient-move {
@@ -69,14 +69,14 @@
 
 /* Lamp tilting animation */
 .lamp-tilt {
-  animation: lampTilt 3s ease-in-out infinite;
+  animation: lampTilt 7s ease-in-out infinite;
 }
 
 @keyframes lampTilt {
-  0%, 100% { transform: rotate(-15deg); }
-  25% { transform: rotate(-5deg); }
-  50% { transform: rotate(15deg); }
-  75% { transform: rotate(5deg); }
+  0%, 100% { transform: rotate(-7deg); }
+  25% { transform: rotate(-2deg); }
+  50% { transform: rotate(7deg); }
+  75% { transform: rotate(2deg); }
 }
 
 /* Accessibility improvements */
@@ -141,8 +141,11 @@ select:focus {
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-  .animate-floatGenie,
-  .animated-gradient-text,
+  .genie-float,
+  .genie-glow-pulse,
+  .float-genie,
+  .gradient-animated-text,
+  .lamp-tilt,
   .marquee {
     animation: none !important;
   }

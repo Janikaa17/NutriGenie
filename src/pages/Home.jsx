@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom"
 import genie from "../assets/genie.png";
 import logo from "../assets/nutrigeniewhitelogo.png";
-import wizardIcon from "../assets/wizard.png";
 
 
 import inputIcon from "../assets/input.png";
@@ -69,26 +68,35 @@ function Home() {
     };
 
     useEffect(() => {
-        // Animate counter
+        // Animate counter (throttled)
         const counter = document.querySelector('.counter');
         if (counter) {
             let n = 0;
             const target = 12000;
             const step = Math.ceil(target / 60);
-            const interval = setInterval(() => {
-                n += step;
+            let lastUpdate = 0;
+            function animateCounter(ts) {
                 if (n >= target) {
                     n = target;
-                    clearInterval(interval);
+                    counter.textContent = n.toLocaleString() + '+ transformed';
+                    return;
                 }
-                counter.textContent = n.toLocaleString() + '+ transformed';
-            }, 16);
+                if (!lastUpdate || ts - lastUpdate > 80) {
+                    n += step;
+                    if (n > target) n = target;
+                    counter.textContent = n.toLocaleString() + '+ transformed';
+                    lastUpdate = ts;
+                }
+                if (n < target) requestAnimationFrame(animateCounter);
+            }
+            requestAnimationFrame(animateCounter);
         }
-        // Fade-in sections on scroll
+        // Fade-in sections on scroll (disconnect after visible)
         const observer = new window.IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
                 }
             });
         }, { threshold: 0.15 });
@@ -222,7 +230,7 @@ function Home() {
                     <div className="text-xl text-gray-200 pb-5 font-quicksand font-light mb-5 ml-2">Try one of these</div>
                     <div className="marquee flex gap-8 items-center h-28 whitespace-nowrap w-max mt-5" role="list" aria-label="Sample recipes to try">
                         {[
-                            { titlxe: "Dosa with Coconut Chutney", summary: "Rice, urad dal, coconut, green chili, curry leaves" },
+                            { title: "Dosa with Coconut Chutney", summary: "Rice, urad dal, coconut, green chili, curry leaves" },
                             { title: "Rajma Chawal", summary: "Kidney beans, rice, tomato, onion, ginger, garlic" },
                             { title: "Aloo Paratha with Curd", summary: "Whole wheat flour, potato, spices, yogurt" },
                             { title: "Pav Bhaji", summary: "Potato, tomato, peas, capsicum, pav buns, butter" },

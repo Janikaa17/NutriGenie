@@ -1,9 +1,8 @@
-// Enhanced cache utility for recipe transformations with security
 class RecipeCache {
     constructor() {
         this.cache = new Map();
         this.maxSize = 200;
-        this.ttl = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+        this.ttl = 24 * 60 * 60 * 1000; 
         this.hitCount = 0;
         this.missCount = 0;
         
@@ -15,23 +14,22 @@ class RecipeCache {
 
     // Generate secure cache key using hash
     generateKey(recipeData) {
-        const { input, goal, dietaryPreference } = recipeData;
-        // Normalize the input to handle whitespace and case differences
-        const normalizedInput = input.toLowerCase().trim().replace(/\s+/g, ' ');
-        const keyString = `${normalizedInput}_${goal || 'general'}_${dietaryPreference || 'veg'}`;
+        const { input, goal, dietaryPreference, seasonality, region } = recipeData;
         
-        // Create a simple hash for security (in production, use crypto-js or similar)
+        const normalizedInput = input.toLowerCase().trim().replace(/\s+/g, ' ');
+        const keyString = `${normalizedInput}_${goal || 'general'}_${dietaryPreference || 'veg'}_${seasonality || 'noseason'}_${region || 'noregion'}`;
+        
         return this.hashString(keyString);
     }
 
-    // Simple hash function (for production, use crypto-js)
+    
     hashString(str) {
         let hash = 0;
         if (str.length === 0) return hash.toString();
         for (let i = 0; i < str.length; i++) {
             const char = str.charCodeAt(i);
             hash = ((hash << 5) - hash) + char;
-            hash = hash & hash; // Convert to 32-bit integer
+            hash = hash & hash; 
         }
         return 'cache_' + Math.abs(hash).toString(36);
     }
@@ -110,7 +108,7 @@ class RecipeCache {
         };
     }
 
-    // Save cache to localStorage (browser only) - encrypted
+    // Save cache to localStorage (browser only) 
     saveToStorage() {
         if (typeof window !== 'undefined' && window.localStorage) {
             try {
@@ -121,7 +119,6 @@ class RecipeCache {
                     timestamp: Date.now()
                 };
                 
-                // In production, encrypt this data before storing
                 const serialized = JSON.stringify(cacheData);
                 window.localStorage.setItem('recipeCache', serialized);
                 console.log('Cache saved to localStorage');
@@ -131,7 +128,6 @@ class RecipeCache {
         }
     }
 
-    // Load cache from localStorage (browser only)
     loadFromStorage() {
         if (typeof window !== 'undefined' && window.localStorage) {
             try {
@@ -145,6 +141,9 @@ class RecipeCache {
                         this.hitCount = cacheData.hitCount || 0;
                         this.missCount = cacheData.missCount || 0;
                         console.log('Cache loaded from localStorage:', this.cache.size, 'entries');
+                        
+                        // Clear old cache entries that don't include new fields
+                        this.clearOldCacheEntries();
                     } else {
                         console.log('LocalStorage cache expired, starting fresh');
                         window.localStorage.removeItem('recipeCache');
@@ -157,6 +156,22 @@ class RecipeCache {
         }
     }
 
+    // Clear old cache entries that don't include the new seasonal and regional fields
+    clearOldCacheEntries() {
+        let clearedCount = 0;
+        for (const [key, value] of this.cache.entries()) {
+            // Check if the cached data includes the new fields
+            if (!value.data.seasonality || !value.data.region) {
+                this.cache.delete(key);
+                clearedCount++;
+            }
+        }
+        if (clearedCount > 0) {
+            console.log(`Cleared ${clearedCount} old cache entries that don't include seasonal/regional data`);
+            this.saveToStorage();
+        }
+    }
+
     // Debug method to log cache contents (without sensitive data)
     debug() {
         console.log('=== CACHE DEBUG ===');
@@ -164,6 +179,7 @@ class RecipeCache {
         console.log('Hit rate:', this.getStats().hitRate);
         console.log('Environment:', typeof window !== 'undefined' ? 'Browser' : 'Node.js');
         console.log('Cache entries count:', this.cache.size);
+        console.log('Cache includes: input, goal, dietaryPreference, seasonality, region');
         console.log('==================');
     }
 }

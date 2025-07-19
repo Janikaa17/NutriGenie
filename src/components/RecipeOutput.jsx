@@ -6,7 +6,7 @@ import genieImg from '../assets/genie.png';
 import lampImg from '../assets/lamp.png';
 
 function RecipeOutput() {
-    const { recipeOutput } = useRecipe();
+    const { recipeOutput, healthGoal, dietaryPreference, seasonality, region } = useRecipe();
     const [activeCard, setActiveCard] = useState(1); // 0 = Original, 1 = Transformed
     const [showAllIngredients, setShowAllIngredients] = useState(false); // New state for ingredient toggle
     const [showTip, setShowTip] = useState(false); // New state for cooking tip toggle
@@ -24,7 +24,16 @@ function RecipeOutput() {
         );
     }
 
+    // Safely extract data with fallbacks
     const { originalRecipe, transformedRecipe, whatChanged, healthScore } = recipeOutput;
+    
+    // Ensure arrays exist to prevent mapping errors
+    const safeSeasonalRecommendations = Array.isArray(recipeOutput.seasonalRecommendations) 
+        ? recipeOutput.seasonalRecommendations 
+        : [];
+    const safeRegionalRecommendations = Array.isArray(recipeOutput.regionalRecommendations) 
+        ? recipeOutput.regionalRecommendations 
+        : [];
 
     // Helper to compare ingredients
     function getIngredientDiffs(original, transformed) {
@@ -60,7 +69,7 @@ function RecipeOutput() {
         });
     };
 
-    // Helper to generate share text
+    
     function getShareText() {
         const recipeName = transformedRecipe.title || "this recipe";
         const healthGoal = recipeOutput.goal || "healthier";
@@ -93,6 +102,30 @@ function RecipeOutput() {
             text += `⏱️ *Cooking:* ${transformedRecipe.estimatedCookingTime || '30 min'} | ${transformedRecipe.difficultyLevel || 'Medium'}\n\n`;
         }
         text += `🔥 Try this AI-powered recipe transformation yourself! → ${link}\n\n`;
+        
+        // Add user inputs info
+        text += `\n📋 Your Preferences:\n`;
+        if (healthGoal) {
+            text += `• Health Goal: ${healthGoal}\n`;
+        }
+        if (seasonality) {
+            text += `• Season: ${seasonality}\n`;
+        }
+        if (region) {
+            text += `• Region: ${region}\n`;
+        }
+        if (dietaryPreference) {
+            text += `• Diet: ${dietaryPreference}\n`;
+        }
+        
+        // Add seasonal and regional info if available
+        if (recipeOutput.seasonalRecommendations && recipeOutput.seasonalRecommendations.length > 0) {
+            text += `🌾 Seasonal picks: ${recipeOutput.seasonalRecommendations[0]}\n`;
+        }
+        if (recipeOutput.regionalRecommendations && recipeOutput.regionalRecommendations.length > 0) {
+            text += `🗺️ Regional picks: ${recipeOutput.regionalRecommendations[0]}\n`;
+        }
+        
         text += `#HealthyCooking #RecipeAI #${healthGoal.replace(/\s+/g, '')} #FoodTransformation`;
         return text;
     }
@@ -147,6 +180,39 @@ function RecipeOutput() {
             if (transformedRecipe.estimatedCookingTime) fullText += `⏱️ Time: ${transformedRecipe.estimatedCookingTime}\n`;
             if (transformedRecipe.difficultyLevel) fullText += `📊 Difficulty: ${transformedRecipe.difficultyLevel}\n`;
             if (transformedRecipe.caloriesPerServing) fullText += `🔥 Calories: ${transformedRecipe.caloriesPerServing}\n`;
+            fullText += `\n`;
+        }
+        
+        // Add user inputs info
+        fullText += `*Your Preferences:*\n`;
+        if (healthGoal) {
+            fullText += `• Health Goal: ${healthGoal}\n`;
+        }
+        if (seasonality) {
+            fullText += `• Season: ${seasonality}\n`;
+        }
+        if (region) {
+            fullText += `• Region: ${region}\n`;
+        }
+        if (dietaryPreference) {
+            fullText += `• Diet: ${dietaryPreference}\n`;
+        }
+        fullText += `\n`;
+        
+        // Add seasonal and regional info if available
+        if (recipeOutput.seasonalRecommendations && recipeOutput.seasonalRecommendations.length > 0) {
+            fullText += `*Seasonal Recommendations:*\n`;
+            recipeOutput.seasonalRecommendations.forEach(rec => {
+                fullText += `• ${rec}\n`;
+            });
+            fullText += `\n`;
+        }
+        
+        if (recipeOutput.regionalRecommendations && recipeOutput.regionalRecommendations.length > 0) {
+            fullText += `*Regional Recommendations:*\n`;
+            recipeOutput.regionalRecommendations.forEach(rec => {
+                fullText += `• ${rec}\n`;
+            });
             fullText += `\n`;
         }
         
@@ -257,11 +323,41 @@ function RecipeOutput() {
                     
                     {/* Section header */}
                     <h3 className="text-3xl font-oswald font-extrabold text-[#22B573] mb-2 text-center">{transformedRecipe.title || "Transformed Recipe"}</h3>
-                    {/* Variant badge and Copy button row */}
+                    {/* User Inputs Display and Action Buttons */}
                     <div className="flex items-center justify-between mb-2">
-                        <span className="bg-[#22B573] text-white font-bold rounded-full px-4 py-1 text-sm tracking-wide uppercase shadow">
-                            {recipeOutput.goal ? recipeOutput.goal : 'Variant'}
-                        </span>
+                        <div className="flex flex-wrap gap-2">
+                            {/* Health Goal Badge */}
+                            <span className="bg-[#22B573] text-white font-bold rounded-full px-4 py-1 text-sm tracking-wide uppercase shadow">
+                                {healthGoal ? healthGoal : 'Variant'}
+                            </span>
+                            
+                            {/* Seasonality Badge */}
+                            {seasonality && (
+                                <span className="bg-[#22B573] text-white font-bold rounded-full px-4 py-1 text-sm tracking-wide uppercase shadow">
+                                    {seasonality}
+                                </span>
+                            )}
+                            
+                            {/* Region Badge */}
+                            {region && (
+                                <span className="bg-[#22B573] text-white font-bold rounded-full px-4 py-1 text-sm tracking-wide uppercase shadow">
+                                    {region.includes('Northern') ? 'NORTH' : 
+                                     region.includes('Southern') ? 'SOUTH' : 
+                                     region.includes('Eastern') ? 'EAST' : 
+                                     region.includes('Western') ? 'WEST' : 
+                                     region.includes('Central') ? 'CENTRAL' : 
+                                     region.split(' ')[0]}
+                                </span>
+                            )}
+                            
+                            {/* Dietary Preference Badge */}
+                            {dietaryPreference && (
+                                <span className="bg-[#22B573] text-white font-bold rounded-full px-4 py-1 text-sm tracking-wide uppercase shadow">
+                                    {dietaryPreference === 'veg' ? 'VEGETARIAN' : 'NON-VEGETARIAN'}
+                                </span>
+                            )}
+                        </div>
+                        
                         <div className="flex gap-2">
                             <button
                                 onClick={handleCopyFullRecipe}
@@ -346,7 +442,7 @@ function RecipeOutput() {
                                         ))}
                                     </ul>
                                     {/* Why These Ingredients section */}
-                                    <div className="mt-4 bg-green-50 rounded p-3">
+                                    <div className="mt-4 bg-green-50 border border-green-500 rounded-lg p-3">
                                         <h5 className="font-semibold text-green-800 mb-1">Why These Ingredients?</h5>
                                         {Array.isArray(transformedRecipe.ingredientRationales) && transformedRecipe.ingredientRationales.length > 0 ? (
                                             <ul className="list-disc ml-6 text-green-800">
@@ -393,8 +489,8 @@ function RecipeOutput() {
                             )}
                         </div>
                         <ol className="list-decimal list-inside text-gray-700 text-base space-y-1">
-                            {transformedRecipe.instructions.map((step, i) => (
-                                <li key={i}>{step}</li>
+                            {Array.isArray(transformedRecipe.instructions) && transformedRecipe.instructions.map((step, i) => (
+                                <li key={i}>{typeof step === 'string' ? step : JSON.stringify(step)}</li>
                             ))}
                         </ol>
                     </div>
@@ -402,12 +498,61 @@ function RecipeOutput() {
                     {/* --- What Changed Section (Trust) --- */}
                     {whatChanged && whatChanged.length > 0 && (
                         <div className="bg-black p-4 rounded-lg shadow mb-4">
-                            <h4 className="text-xl font-bold text-[#22B573] mb-2 text-center">What Changed?</h4>
+                            <h4 className="text-xl font-oswald font-bold text-[#22B573] mb-2">What Changed?</h4>
                             <ul className="list-disc list-inside text-white text-base space-y-2 max-w-2xl mx-auto">
-                                {whatChanged.map((change, i) => (
-                                    <li key={i}>{change}</li>
+                                {Array.isArray(whatChanged) && whatChanged.map((change, i) => (
+                                    <li key={i}>{typeof change === 'string' ? change : JSON.stringify(change)}</li>
                                 ))}
                             </ul>
+                        </div>
+                    )}
+
+                    {/* --- Seasonal & Regional Recommendations --- */}
+                    {(safeSeasonalRecommendations.length > 0 || safeRegionalRecommendations.length > 0) && (
+                        <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 p-4 rounded-lg shadow mb-4">
+                            <h4 className="text-xl font-oswald font-bold text-[#22B573] mb-3">Seasonal & Regional Insights</h4>
+                            
+                            {/* Seasonal Recommendations */}
+                            {safeSeasonalRecommendations.length > 0 && (
+                                <div className="mb-3">
+                                    <h5 className="font-semibold text-green-800 mb-2 flex items-center gap-2">
+                                         Seasonal Recommendations
+                                    </h5>
+                                    <ul className="list-disc list-inside text-sm text-green-800 space-y-1">
+                                        {safeSeasonalRecommendations.map((recommendation, i) => (
+                                            <li key={i}>
+                                                {typeof recommendation === 'string' 
+                                                    ? recommendation 
+                                                    : recommendation.ingredient 
+                                                        ? `${recommendation.ingredient}: ${recommendation.justification || 'Seasonal recommendation'}`
+                                                        : JSON.stringify(recommendation)
+                                                }
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                            
+                            {/* Regional Recommendations */}
+                            {safeRegionalRecommendations.length > 0 && (
+                                <div className="mb-3">
+                                    <h5 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                                         Regional Recommendations
+                                    </h5>
+                                    <ul className="list-disc list-inside text-sm text-blue-800 space-y-1">
+                                        {safeRegionalRecommendations.map((recommendation, i) => (
+                                            <li key={i}>
+                                                {typeof recommendation === 'string' 
+                                                    ? recommendation 
+                                                    : recommendation.ingredient 
+                                                        ? `${recommendation.ingredient}: ${recommendation.justification || 'Regional recommendation'}`
+                                                        : JSON.stringify(recommendation)
+                                                }
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                     )}
 
@@ -416,8 +561,11 @@ function RecipeOutput() {
                         <div className="bg-green-50 border border-green-400 p-3 mb-4 rounded-xl shadow">
                             <h5 className="font-semibold text-green-800 mb-2">How This Recipe Supports {recipeOutput.goal || 'Your Health'}</h5>
                             <ul className="list-disc list-inside text-sm text-green-800">
-                                {transformedRecipe.nutritionalBenefits.map((benefit, i) => (
-                                    <li key={i}>{benefit} <span className="text-xs text-[#22B573]">({recipeOutput.goal ? `Supports ${recipeOutput.goal.toLowerCase()}` : 'General health'})</span></li>
+                                {Array.isArray(transformedRecipe.nutritionalBenefits) && transformedRecipe.nutritionalBenefits.map((benefit, i) => (
+                                    <li key={i}>
+                                        {typeof benefit === 'string' ? benefit : JSON.stringify(benefit)} 
+                                        <span className="text-xs text-[#22B573]">({recipeOutput.goal ? `Supports ${recipeOutput.goal.toLowerCase()}` : 'General health'})</span>
+                                    </li>
                                 ))}
                             </ul>
                         </div>
