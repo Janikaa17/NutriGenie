@@ -168,11 +168,13 @@ You are an expert Indian nutritionist, chef, and food scientist with 15+ years o
 - Region: ${recipe.region || "not specified"}
 - Maintain authentic Indian flavors while improving nutrition
 
-**SEASONAL CONTEXT:**
-${recipe.seasonality ? `Current season is ${recipe.seasonality}. Focus on ingredients that are fresh, abundant, and cost-effective during this period.` : "No specific season selected. Use year-round available ingredients."}
+${recipe.seasonality ? 
+  `**SEASONAL CONTEXT:** Current season is ${recipe.seasonality}. Focus on ingredients that are fresh, abundant, and cost-effective during this period. Include a 'seasonalRecommendations' array with detailed justifications.` : 
+  "**SEASONAL CONTEXT:** No specific season selected. Do NOT include or mention seasonal recommendations or force seasonal changes."}
 
-**REGIONAL CONTEXT:**
-${recipe.region ? `User is from ${recipe.region}. Incorporate locally available ingredients and regional cooking styles for authenticity and accessibility.` : "No specific region selected. Use pan-Indian ingredients."}
+${recipe.region ? 
+  `**REGIONAL CONTEXT:** User is from ${recipe.region}. Incorporate locally available ingredients and regional cooking styles for authenticity and accessibility. Include a 'regionalRecommendations' array with detailed justifications.` : 
+  "**REGIONAL CONTEXT:** No specific region selected. Do NOT include or mention regional recommendations or force regional changes."}
 
 **PRACTICAL TRANSFORMATION APPROACH:**
 
@@ -337,6 +339,14 @@ Make this transformation genuinely useful for real Indian home cooking!`;
     }
     // Store result in cache
     backendRecipeCache.set(recipe, parsed);
+
+    if (!recipe.seasonality && parsed.seasonalRecommendations) {
+      delete parsed.seasonalRecommendations;
+    }
+    if (!recipe.region && parsed.regionalRecommendations) {
+      delete parsed.regionalRecommendations;
+    }
+
     res.status(200).json(parsed);
   } catch (error) {
     console.error('API Error:', error);

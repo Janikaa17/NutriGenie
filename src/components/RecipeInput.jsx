@@ -32,14 +32,6 @@ function RecipeInput() {
             validationErrors.push('Please select a health & nutrition goal');
         }
         
-        if (!seasonality) {
-            validationErrors.push('Please select a season');
-        }
-        
-        if (!region) {
-            validationErrors.push('Please select a region');
-        }
-        
         if (validationErrors.length > 0) {
             setError(`Please complete all fields: ${validationErrors.join(', ')}`);
             return;
@@ -221,7 +213,7 @@ function RecipeInput() {
             <div>
                 <label htmlFor="seasonality" className="block text-base font-oswald font-bold text-[#22B573] mb-2 tracking-wide">
                     <FaCalendarAlt className="inline mr-2" />
-                    Seasonality <span className="text-green-500">*</span>
+                    Seasonality
                 </label>
                 <div className="space-y-2">
                     <select
@@ -243,7 +235,7 @@ function RecipeInput() {
             <div>
                 <label htmlFor="region" className="block text-base font-oswald font-bold text-[#22B573] mb-2 tracking-wide">
                     <FaMapMarkerAlt className="inline mr-2" />
-                    Region <span className="text-green-500">*</span>
+                    Region
                 </label>
                 <div className="space-y-2">
                     <select
@@ -345,12 +337,12 @@ function RecipeInput() {
 
             <button
                 className={`w-full flex items-center justify-center gap-2 py-3 font-oswald font-bold text-base rounded-none shadow-md transition-colors tracking-wide focus:outline-none focus:ring-2 focus:ring-[#22B573]/30 ${
-                    !input.trim() || !goal || !seasonality || !region || loading
+                    !input.trim() || !goal || loading
                         ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
                         : 'bg-[#22B573] text-white hover:bg-[#328E6E]'
                 }`}
                 type="submit"
-                disabled={!input.trim() || !goal || !seasonality || !region || loading}
+                disabled={!input.trim() || !goal || loading}
             >
                 <FaSyncAlt className={loading ? 'animate-spin' : ''} />
                 {loading ? "Transforming..." : "Transform Recipe"}
